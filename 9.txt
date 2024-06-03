@@ -1,0 +1,40 @@
+output.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%
+String n = request.getParameter("number");
+int no = Integer.parseInt(n);//string to integer
+out.println("Number entered is"+no);
+out.println("cube of number is "+ no*no*no);
+%>
+</body>
+</html>
+
+
+
+input.html
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="output.jsp">
+
+<label>Enter the number</label>
+<input type="number" name="number">
+<button type="submit">submit</button>
+
+</form>
+</body>
+</html>

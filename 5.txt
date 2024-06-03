@@ -1,0 +1,128 @@
+// create two Project RMIServer and  RMIClient
+//In RMIServer create 3 file checkPalindrome, checkPalindromeImpl and RMIServer
+//In RMIClient create file RMIClient
+
+//create interface checkPalindrome
+
+package RMI5;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+public interface checkPalindrome extends Remote{
+
+	public boolean isPalindrome(String str) throws RemoteException;
+
+}
+************
+
+// create class checkPalindromeImpl
+
+package RMI5;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+public class checkPalindromeImpl extends UnicastRemoteObject implements checkPalindrome {
+
+    protected checkPalindromeImpl() throws RemoteException {
+        super();
+    }
+
+    @Override
+    public boolean isPalindrome(String str) throws RemoteException {
+        if (str == null) {
+            return false; // Input string is null, cannot be a palindrome
+        }
+
+        // Remove non-alphanumeric characters and convert to lowercase
+        String cleanStr = str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        int left = 0;
+        int right = cleanStr.length() - 1;
+
+        while (left < right) {
+            if (cleanStr.charAt(left) != cleanStr.charAt(right)) {
+                return false; // Characters don't match, not a palindrome
+            }
+            left++;
+            right--;
+        }
+
+        return true; // String is a palindrome
+    }
+}
+
+
+
+*********
+
+//create class RMIServer
+
+package RMI5;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.registry.*;
+
+public class RMIServer extends UnicastRemoteObject implements checkPalindrome{
+
+	protected RMIServer() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		
+		try {
+			RMIServer server = new RMIServer();
+			Registry registry = LocateRegistry.createRegistry(1099);
+			
+			registry.rebind("Palindrome",server);
+			System.out.println("server started......");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public boolean isPalindrome(String str) throws RemoteException {
+		// TODO Auto-generated method stub
+		checkPalindromeImpl checkPalindrome = new checkPalindromeImpl();
+		return checkPalindrome.isPalindrome(str);
+	}
+	
+
+}
+
+
+**********
+
+
+//create class RMIClient
+
+
+package RMI5;
+import java.util.*;
+import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+public class RMIClient {
+
+	public static void main(String[] args) {
+		try {
+			Registry registry = LocateRegistry.getRegistry(1099);
+			
+			checkPalindrome checker = (checkPalindrome) registry.lookup("Palindrome");
+			Scanner sc = new Scanner(System.in);
+			System.out.println("enter string ");
+			
+			String input = sc.nextLine();
+			boolean isPalindrome = checker.isPalindrome(input);
+            System.out.println("'" + input + "' is a palindrome: " + isPalindrome);
+
+			sc.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

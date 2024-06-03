@@ -1,0 +1,128 @@
+import java.sql.*;
+import java.util.*;
+public class Exp8 {
+
+	public static void main(String[] args) {
+		
+		String Driver = "com.mysql.jdbc.Driver";
+		String url = "jdbc:mysql://localhost:3306/exp8";
+		String usr = "root";
+		String psw = "Y@shDb152";
+		
+		try {
+			
+			String query1 = "insert into students values(121,'Yash')";
+			String query2 = "Select * from students";
+			String query3 = "update students set name = 'sonu' where rollno = 121";
+			String query4 = "delete from students where rollno = 121";
+			
+			Class.forName(Driver);
+			Connection con = DriverManager.getConnection(url,usr,psw);
+			Statement stmt = con.createStatement();
+			
+			boolean continueloop = true;
+			
+			do {
+				System.out.println("enter choice");
+				Scanner sc = new Scanner(System.in);
+				int choice = sc.nextInt();
+				
+				switch(choice) {
+				case 1:
+					stmt.execute(query1);
+					System.out.println("data insert successully");
+					break;
+				case 2:
+					ResultSet rs = stmt.executeQuery(query2);
+					while(rs.next()) {
+						System.out.println(rs.getInt(1)+ " "+ rs.getString(2));
+					}
+					
+					break;
+				case 3:
+					stmt.executeUpdate(query3);
+					System.out.println("update successfully");
+					break;
+				case 4:
+					stmt.execute(query4);
+					System.out.println("Deletion successfully");
+					break;
+				default:
+					System.out.println("invalid choice");
+				}
+				
+				if(continueloop) {
+					System.out.println("do you want to continue Y || N");
+					
+					String input = sc.next();
+					if(input.equals("Y")) {
+						continueloop = true;
+					}
+					else {
+						continueloop = false;
+					}
+					
+				}
+				
+			}while(continueloop);
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+
+
+
+
+
+prepared statement
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class PreparedStatementExample {
+    public static void main(String[] args) {
+        String jdbcURL = "jdbc:mysql://localhost:3306/mydatabase";
+        String dbUser = "root";
+        String dbPassword = "password";
+
+        String insertSQL = "INSERT INTO Employee (emp_id, emp_name) VALUES (?, ?)";
+        String selectSQL = "SELECT emp_id, emp_name FROM Employee";
+
+        try (Connection connection = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
+             PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+             PreparedStatement selectStatement = connection.prepareStatement(selectSQL)) {
+
+            // Insert data into the table
+            insertStatement.setInt(1, 101);
+            insertStatement.setString(2, "John Doe");
+            insertStatement.executeUpdate();
+
+            insertStatement.setInt(1, 102);
+            insertStatement.setString(2, "Jane Smith");
+            insertStatement.executeUpdate();
+
+            // Retrieve and display data from the table
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int empId = resultSet.getInt("emp_id");
+                    String empName = resultSet.getString("emp_name");
+
+                    System.out.println("Employee ID: " + empId + ", Employee Name: " + empName);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+

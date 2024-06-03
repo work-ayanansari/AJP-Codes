@@ -1,0 +1,29 @@
+import java.applet.Applet;
+import java.awt.Graphics;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+public class Exp1 extends Applet implements KeyListener {
+String str = "";
+public void init() {
+addKeyListener(this);
+}
+public void keyPressed(KeyEvent e) {
+str = "Key is Pressed";
+showStatus("Key is Pressed");
+repaint();
+}
+public void keyReleased(KeyEvent e) {
+str = "Key Released";
+showStatus("Key is Released");
+repaint();
+}
+public void keyTyped(KeyEvent e) {
+str = "Pressed key is ";
+char key = e.getKeyChar();
+str += key;
+repaint();
+}
+public void paint(Graphics g) {
+g.drawString(str, 50, 50);
+}
+}

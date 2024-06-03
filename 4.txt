@@ -1,0 +1,40 @@
+import java.sql.*;
+
+
+public class Exp4{
+	
+	public static void main(String args[]) {
+	
+		
+		String URL = "jdbc:mysql://localhost:3306/students";
+		String user = "root";
+		String psw = "Y@shDb152";
+		String query1 = "Insert into students values(123,'Yash','Bhangale',878594545)";
+		String query2 = "Insert into students values(124,'sonu','Bhangale',878594545)";
+		String query3 = "Select * from students";
+
+	
+	
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con = DriverManager.getConnection(URL, user, psw);
+			Statement stmt = con.createStatement();
+			stmt.execute(query1);
+			stmt.execute(query2);
+			
+			ResultSet rs = stmt.executeQuery(query3);
+			System.out.println(rs);
+			
+			while(rs.next()) {
+				System.out.println(rs.getInt(1) + " "+ rs.getString(2)+" "+rs.getString(3)+" "+rs.getInt(4));
+			}
+		}
+		catch(SQLException e) {	
+			e.printStackTrace();;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+}

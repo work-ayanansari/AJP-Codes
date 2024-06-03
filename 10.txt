@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Inpute html webpage</title>
+</head>
+<body>
+<form action="Servlet_file" method="post">
+<h1>Registration Details</h1>
+<label>Username</label>
+<input type="text" name="username">
+<br><br>
+<label>Password</label>
+<input type="password" name="password">
+<br><br>
+<label>Email Id</label>
+<input type="email" name="email">
+<br><br>
+<label>Country</label>
+<input type="text" name="country">
+<br><br>
+<input type="submit" value="Register"><br/>
+</form>
+</body>
+</html>
+*******************
+import java.sql.*;
+
+public class RegistrationDao {
+
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String URL = "jdbc:mysql://localhost:3306/EXP10";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Y@shDb152";
+    private static final String INSERT_QUERY = "INSERT INTO exp10 (username, password, email, country) VALUES (?, ?, ?, ?)";
+
+    public void createUser(String username, String password, String email, String country) throws SQLException {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            Class.forName(DRIVER);
+            con = DriverManager.getConnection(URL, USER, PASSWORD);
+            pstmt = con.prepareStatement(INSERT_QUERY);
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setString(3, email);
+            pstmt.setString(4, country);
+            pstmt.executeUpdate();
+
+            System.out.println("User Registered Successfully");
+        } catch (ClassNotFoundException | SQLException e) {
+            // Log the exception or throw it to the caller
+            // You might want to throw a custom exception here
+            e.printStackTrace();
+            throw new SQLException("Error in database operation", e);
+        } 
+    }
+}
+******************
+
+
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.*;
+/**
+ * Servlet implementation class Servlet_file
+ */
+public class Servlet_file extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public Servlet_file() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	        String username = request.getParameter("username");
+	        String password = request.getParameter("password");
+	        String email = request.getParameter("email");
+	        String country = request.getParameter("country");
+
+	        try {
+	            RegistrationDao regdao = new RegistrationDao();
+	            regdao.createUser(username, password, email, country);
+	            response.getWriter().print("User Registered Successfully");
+	        } catch (SQLException e) {
+	            // Log the exception or throw it to the caller
+	            e.printStackTrace();
+	            response.getWriter().print("An error occurred while registering user");
+	        }
+	    }
+
+
+	}
+
+
